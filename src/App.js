@@ -22,11 +22,20 @@ function App() {
     });
     return (
         <div className="App">
-            <h1>Cassapp</h1>
-            <img width={100} src='android-chrome-192x192.png' alt='Cassapp logo'/>
             <ApolloProvider client={client}>
                 <Homepage />
             </ApolloProvider>
+            <div style={{
+                margin: 0,
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                width: '95%',
+                transform: 'translate(-50%, -50%)'
+            }}>
+                <h1>Cassapp</h1>
+                <img width={100} src='android-chrome-192x192.png' alt='Cassapp logo'/>
+            </div>
         </div>
     );
 }

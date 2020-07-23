@@ -308,9 +308,9 @@ function Connection() {
                 <div style={{
                     margin: 0,
                     position: 'absolute',
-                    top: '50%',
+                    top: '10%',
                     left: '50%',
-                    width: '60%',
+                    width: '95%',
                     transform: 'translate(-50%, -50%)'
                 }}>
                     <Users/>
@@ -322,9 +322,9 @@ function Connection() {
                 <div style={{
                     margin: 0,
                     position: 'absolute',
-                    top: '60%',
+                    top: '20%',
                     left: '50%',
-                    width: '60%',
+                    width: '95%',
                     transform: 'translate(-50%, -50%)'
                 }}>
                     <Alcohol />
