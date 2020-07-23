@@ -1,26 +1,32 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
 
+import {ApolloProvider} from "@apollo/react-hooks";
+import {HttpLink} from "apollo-link-http";
+import ApolloClient from "apollo-client";
+import {InMemoryCache} from "apollo-cache-inmemory";
+
+import Homepage from "./Homepage";
+
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    const headers = {
+        'x-hasura-admin-secret': process.env.REACT_APP_APOLLO_ADMIN_KEY
+    };
+    const httpLink = new HttpLink({
+        uri: process.env.REACT_APP_APOLLO_URL,
+        headers
+    });
+    const client = new ApolloClient({
+        link: httpLink,
+        cache: new InMemoryCache()
+    });
+    return (
+        <div className="App">
+            <ApolloProvider client={client}>
+                <Homepage />
+            </ApolloProvider>
+        </div>
+    );
 }
 
 export default App;
