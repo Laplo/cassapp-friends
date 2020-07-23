@@ -99,6 +99,7 @@ function Users() {
             noOptionsText="Aucun utilisateur correspondant"
             loadingText="Chargement des utilisateurs..."
             renderInput={(params) => <TextField {...params} label="Qui êtes vous ?" variant="outlined" />}
+            ListboxProps={{ style: { maxHeight: '10rem' } }}
         />
     );
 }
@@ -168,6 +169,7 @@ function Alcohol() {
             noOptionsText="Aucun alcool correspondant"
             loadingText="Chargement des alcools..."
             renderInput={(params) => <TextField {...params} label="Choisissez votre alcool" variant="outlined" />}
+            ListboxProps={{ style: { maxHeight: '10rem' } }}
         />
     );
 }
@@ -211,6 +213,7 @@ function Soft() {
             noOptionsText="Aucun soft correspondant"
             loadingText="Chargement des softs..."
             renderInput={(params) => <TextField {...params} label="Choisissez votre soft" variant="outlined" />}
+            ListboxProps={{ style: { maxHeight: '10rem' } }}
         />
     );
 }
