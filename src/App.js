@@ -22,6 +22,9 @@ function App() {
     });
     return (
         <div className="App">
+            <h1>
+                Bienvenue sur la Cassapp
+            </h1>
             <ApolloProvider client={client}>
                 <Homepage />
             </ApolloProvider>
