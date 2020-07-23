@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 
 import TextField from '@material-ui/core/TextField';
 import Autocomplete from '@material-ui/lab/Autocomplete';
@@ -94,7 +94,7 @@ function Users() {
         <Autocomplete
             id="searchUsers"
             loading={loadingUsers}
-            options={dataUsers ? dataUsers.users : [] }
+            options={dataUsers ? dataUsers.users.sort((a, b) => a.user_name.localeCompare(b.user_name)) : [] }
             getOptionLabel={(option) => option.user_name}
             onChange={handleOnChange}
             noOptionsText="Aucun utilisateur correspondant"
@@ -105,7 +105,6 @@ function Users() {
 }
 
 function Logout() {
-
     const handleOnClick = () => {
         userApi.setState({
             user: undefined
@@ -127,22 +126,33 @@ function Logout() {
 
 function Alcohol() {
     const {data: dataAlcohols, loading: loadingAlcohols} = QueryAlcohols();
-
     const handleOnChange = (event, value) => {
-        const alcohol = (dataAlcohols ? dataAlcohols.alcohols.find(({id}) => id === value.id) : undefined);
-        alcoholApi.setState({
-            alcohol: alcohol ? alcohol.alcohol_id : undefined
-        });
+        if (value) {
+            const alcohol = (dataAlcohols ? dataAlcohols.alcohols.find(({id}) => id === value.id) : undefined);
+            alcoholApi.setState({
+                alcohol: alcohol ? alcohol.alcohol_id : undefined
+            });
+        }
     };
+    const [option, setOption] = useState('an');
+    alcoholApi.subscribe(({alcohol}) =>
+        setOption(alcohol ? 'ann' : 'an')
+    );
+    useEffect(() => {
+        if (option === 'an') {
+            setOption('ann');
+        }
+    }, [option]);
 
     return (
         <Autocomplete
+            key={option}
             id="searchAlcohols"
             style={{
                 marginBottom: '1em'
             }}
             loading={loadingAlcohols}
-            options={dataAlcohols ? dataAlcohols.alcohols : [] }
+            options={dataAlcohols ? dataAlcohols.alcohols.sort((a, b) => a.alcohol_name.localeCompare(b.alcohol_name)) : [] }
             getOptionLabel={(option) => option.alcohol_name}
             onChange={handleOnChange}
             noOptionsText="Aucun alcool correspondant"
@@ -156,20 +166,32 @@ function Soft() {
     const {data: dataSofts, loading: loadingSofts} = QuerySofts();
 
     const handleOnChange = (event, value) => {
-        const soft = (dataSofts ? dataSofts.softs.find(({id}) => id === value.id) : undefined);
-        softApi.setState({
-            soft: soft ? soft.soft_id : undefined
-        });
+        if (value) {
+            const soft = (dataSofts ? dataSofts.softs.find(({id}) => id === value.id) : undefined);
+            softApi.setState({
+                soft: soft ? soft.soft_id : undefined
+            });
+        }
     };
+    const [option, setOption] = useState('sn');
+    softApi.subscribe(({soft}) =>
+        setOption(soft ? 'snn' : 'sn')
+    );
+    useEffect(() => {
+        if (option === 'sn') {
+            setOption('snn');
+        }
+    }, [option]);
 
     return (
         <Autocomplete
+            key={option}
             id="searchSofts"
             style={{
                 marginBottom: '1em'
             }}
             loading={loadingSofts}
-            options={dataSofts ? dataSofts.softs : [] }
+            options={dataSofts ? dataSofts.softs.sort((a, b) => a.soft_name.localeCompare(b.soft_name)) : [] }
             getOptionLabel={(option) => option.soft_name}
             onChange={handleOnChange}
             noOptionsText="Aucun soft correspondant"
@@ -205,6 +227,15 @@ function SendOrder() {
                 alcohol_id: alcohol
             }
         }).then(() => {
+            alcoholApi.setState({
+                alcohol: undefined
+            });
+            softApi.setState({
+                soft: undefined
+            });
+            commentApi.setState({
+                comment: undefined
+            });
             setOpen(true);
         });
     };
@@ -213,7 +244,8 @@ function SendOrder() {
         <>
             <Button
                 style={{
-                    marginTop: '1em'
+                    marginTop: '1em',
+                    float: 'right'
                 }}
                 variant="contained"
                 color="primary"
@@ -277,7 +309,7 @@ function Connection() {
                         <Comment />
                     </Grid>
                     <Grid item xs={2} />
-                    <Grid item xs={7} />
+                    <Grid item xs={6} />
                     <Grid item xs={4}>
                         <SendOrder />
                     </Grid>
@@ -288,6 +320,15 @@ function Connection() {
 }
 
 function Comment() {
+    const [option, setOption] = useState('cn');
+    commentApi.subscribe(({comment}) =>
+        setOption(comment ? 'cnn' : 'cn')
+    );
+    useEffect(() => {
+        if (option === 'cn') {
+            setOption('cnn');
+        }
+    }, [option]);
 
     const handleOnChange = ({target: {value}}) => {
         commentApi.setState({
@@ -297,6 +338,7 @@ function Comment() {
 
     return (
         <TextField
+            key={option}
             id="comment-text"
             label="Commentaire"
             variant="outlined"
