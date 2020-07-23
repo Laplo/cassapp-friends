@@ -22,9 +22,8 @@ function App() {
     });
     return (
         <div className="App">
-            <h1>
-                Bienvenue sur la Cassapp
-            </h1>
+            <h1>Cassapp</h1>
+            <img width={100} src='android-chrome-192x192.png' alt='Cassapp logo'/>
             <ApolloProvider client={client}>
                 <Homepage />
             </ApolloProvider>

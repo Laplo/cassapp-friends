@@ -2,7 +2,6 @@ import React, {useEffect, useState} from "react";
 
 import TextField from '@material-ui/core/TextField';
 import Autocomplete from '@material-ui/lab/Autocomplete';
-import Button from "@material-ui/core/Button";
 
 import PowerSettingsNewIcon from '@material-ui/icons/PowerSettingsNew';
 import SendIcon from '@material-ui/icons/Send';
@@ -11,8 +10,8 @@ import {gql} from "apollo-boost";
 import {useQuery, useMutation} from "@apollo/react-hooks";
 
 import create from 'zustand';
-import Grid from "@material-ui/core/Grid";
 import Snackbar from "@material-ui/core/Snackbar";
+import Fab from "@material-ui/core/Fab";
 
 function QueryUsers() {
     const GET_USERS = gql`
@@ -114,14 +113,20 @@ function Logout() {
     };
 
     return (
-        <Button
-            variant="contained"
+        <Fab
             color="primary"
-            startIcon={<PowerSettingsNewIcon />}
+            aria-label="logout"
+            style={{
+                position: 'absolute',
+                zIndex: 1,
+                bottom: '10%',
+                left: '10%',
+                margin: '0 auto',
+            }}
             onClick={handleOnClick}
         >
-            Déconnexion
-        </Button>
+            <PowerSettingsNewIcon />
+        </Fab>
     );
 }
 
@@ -264,19 +269,21 @@ function SendOrder() {
 
     return (
         <>
-            <Button
-                style={{
-                    marginTop: '1em',
-                    float: 'right'
-                }}
-                disabled={(soft || alcohol) === undefined}
-                variant="contained"
+            <Fab
                 color="primary"
-                startIcon={<SendIcon />}
+                aria-label="send"
+                style={{
+                    position: 'absolute',
+                    zIndex: 1,
+                    bottom: '10%',
+                    right: '10%',
+                    margin: '0 auto',
+                }}
                 onClick={handleOnClick}
+                disabled={!soft && !alcohol}
             >
-                Passer la commande
-            </Button>
+                <SendIcon />
+            </Fab>
             <Snackbar
                 anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
                 onClose={() => setOpen(false)}
@@ -298,7 +305,6 @@ function Connection() {
     return (
         !userSt && !userLs ?
             <>
-                <h2>D'abord, dites moi qui vous êtes</h2>
                 <div style={{
                     margin: 0,
                     position: 'absolute',
@@ -307,37 +313,25 @@ function Connection() {
                     width: '60%',
                     transform: 'translate(-50%, -50%)'
                 }}>
-                        <Users/>
+                    <Users/>
                 </div>
             </>
             :
             <>
-                <h2>Passez maintenant votre commande ou déconnectez vous</h2>
                 <Logout />
-                <Grid container style={{
-                    marginTop: '1em'
+                <div style={{
+                    margin: 0,
+                    position: 'absolute',
+                    top: '60%',
+                    left: '50%',
+                    width: '60%',
+                    transform: 'translate(-50%, -50%)'
                 }}>
-                    <Grid item xs={2} />
-                    <Grid item xs={8}>
-                        <Alcohol />
-                    </Grid>
-                    <Grid item xs={2} />
-                    <Grid item xs={2} />
-                    <Grid item xs={8}>
-                        <Soft />
-                    </Grid>
-                    <Grid item xs={2} />
-                    <Grid item xs={2} />
-                    <Grid item xs={8}>
-                        <Comment />
-                    </Grid>
-                    <Grid item xs={2} />
-                    <Grid item xs={6} />
-                    <Grid item xs={4}>
-                        <SendOrder />
-                    </Grid>
-                    <Grid item xs={2} />
-                </Grid>
+                    <Alcohol />
+                    <Soft />
+                    <Comment />
+                </div>
+                <SendOrder />
             </>
     );
 }
