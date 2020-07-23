@@ -8,10 +8,9 @@ import PowerSettingsNewIcon from '@material-ui/icons/PowerSettingsNew';
 import SendIcon from '@material-ui/icons/Send';
 
 import {gql} from "apollo-boost";
-import {useQuery} from "@apollo/react-hooks";
+import {useQuery, useMutation} from "@apollo/react-hooks";
 
 import create from 'zustand';
-import {useMutation} from "@apollo/client";
 import Grid from "@material-ui/core/Grid";
 import Snackbar from "@material-ui/core/Snackbar";
 
@@ -132,6 +131,10 @@ function Alcohol() {
             alcoholApi.setState({
                 alcohol: alcohol ? alcohol.alcohol_id : undefined
             });
+        } else {
+            alcoholApi.setState({
+                alcohol: undefined
+            });
         }
     };
     const [option, setOption] = useState('an');
@@ -170,6 +173,10 @@ function Soft() {
             const soft = (dataSofts ? dataSofts.softs.find(({id}) => id === value.id) : undefined);
             softApi.setState({
                 soft: soft ? soft.soft_id : undefined
+            });
+        } else {
+            softApi.setState({
+                soft: undefined
             });
         }
     };
@@ -247,6 +254,7 @@ function SendOrder() {
                     marginTop: '1em',
                     float: 'right'
                 }}
+                disabled={(soft || alcohol) === undefined}
                 variant="contained"
                 color="primary"
                 startIcon={<SendIcon />}
