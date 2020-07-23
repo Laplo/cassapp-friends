@@ -242,15 +242,6 @@ function SendOrder() {
                 alcohol_id: alcohol.alcohol_id
             }
         }).then(() => {
-            alcoholApi.setState({
-                alcohol: undefined
-            });
-            softApi.setState({
-                soft: undefined
-            });
-            commentApi.setState({
-                comment: undefined
-            });
             const body = JSON.stringify({
                 username: username || user.user_name,
                 alcohol: alcohol.alcohol_name,
@@ -263,6 +254,15 @@ function SendOrder() {
                 headers: { 'Content-Type': 'application/json' },
             }).then(() => {
                 setOpen(true);
+                alcoholApi.setState({
+                    alcohol: undefined
+                });
+                softApi.setState({
+                    soft: undefined
+                });
+                commentApi.setState({
+                    comment: undefined
+                });
             });
         });
     };
@@ -285,7 +285,7 @@ function SendOrder() {
                 <SendIcon />
             </Fab>
             <Snackbar
-                anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
                 onClose={() => setOpen(false)}
                 autoHideDuration={3000}
                 open={open}
