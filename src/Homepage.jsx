@@ -81,11 +81,12 @@ function Users() {
 
     const handleOnChange = (event, value) => {
         if (value) {
-            const user = (dataUsers ? dataUsers.users.find(({id}) => id === value.id) : undefined);
+            const user = (dataUsers ? dataUsers.users.find(({user_id}) => user_id === value.user_id) : undefined);
             userApi.setState({
-                user: user ? user.user_id : undefined
+                user
             });
-            localStorage.setItem('user', user ? user.user_id : undefined);
+            localStorage.setItem('username', user.user_name);
+            localStorage.setItem('userid', user.user_id);
         }
     };
 
@@ -108,7 +109,8 @@ function Logout() {
         userApi.setState({
             user: undefined
         });
-        localStorage.removeItem('user');
+        localStorage.removeItem('username');
+        localStorage.removeItem('userid');
     };
 
     return (
@@ -127,9 +129,9 @@ function Alcohol() {
     const {data: dataAlcohols, loading: loadingAlcohols} = QueryAlcohols();
     const handleOnChange = (event, value) => {
         if (value) {
-            const alcohol = (dataAlcohols ? dataAlcohols.alcohols.find(({id}) => id === value.id) : undefined);
+            const alcohol = (dataAlcohols ? dataAlcohols.alcohols.find(({alcohol_id}) => alcohol_id === value.alcohol_id) : undefined);
             alcoholApi.setState({
-                alcohol: alcohol ? alcohol.alcohol_id : undefined
+                alcohol
             });
         } else {
             alcoholApi.setState({
@@ -170,9 +172,9 @@ function Soft() {
 
     const handleOnChange = (event, value) => {
         if (value) {
-            const soft = (dataSofts ? dataSofts.softs.find(({id}) => id === value.id) : undefined);
+            const soft = (dataSofts ? dataSofts.softs.find(({soft_id}) => soft_id === value.soft_id) : undefined);
             softApi.setState({
-                soft: soft ? soft.soft_id : undefined
+                soft
             });
         } else {
             softApi.setState({
@@ -218,20 +220,21 @@ function SendOrder() {
     const {comment} = useCommentStore(state => ({
         comment: state.comment
     }));
-    const userSt = useUserStore(state => ({
+    const {user} = useUserStore(state => ({
         user: state.user
-    })).user;
-    const userLs = localStorage.getItem('user');
+    }));
+    const username = localStorage.getItem('username');
+    const userId = localStorage.getItem('userid');
     const [addOrder] = MutationOrder();
     const [open, setOpen] = useState(false);
 
     const handleOnClick = () => {
         addOrder({
             variables: {
-                user_id: userLs || userSt,
+                user_id: userId || user.user_id,
                 comment,
-                soft_id: soft,
-                alcohol_id: alcohol
+                soft_id: soft.soft_id,
+                alcohol_id: alcohol.alcohol_id
             }
         }).then(() => {
             alcoholApi.setState({
@@ -243,7 +246,19 @@ function SendOrder() {
             commentApi.setState({
                 comment: undefined
             });
-            setOpen(true);
+            const body = JSON.stringify({
+                username: username || user.user_name,
+                alcohol: alcohol.alcohol_name,
+                soft: soft.soft_name,
+                comment
+            });
+            fetch('https://sweet-liberating-practice.glitch.me/', {
+                method: 'POST',
+                body,
+                headers: { 'Content-Type': 'application/json' },
+            }).then(() => {
+                setOpen(true);
+            });
         });
     };
 
@@ -278,7 +293,7 @@ function Connection() {
     const {userSt} = useUserStore(state => ({
         user: state.user
     }));
-    const userLs = localStorage.getItem('user');
+    const userLs = localStorage.getItem('userid');
 
     return (
         !userSt && !userLs ?
