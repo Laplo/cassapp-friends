@@ -251,7 +251,7 @@ function SendOrder() {
                 soft: soft.soft_name,
                 comment
             });
-            fetch('https://sweet-liberating-practice.glitch.me/', {
+            fetch(process.env.REACT_APP_MAIL_SENDER_URL, {
                 method: 'POST',
                 body,
                 headers: { 'Content-Type': 'application/json' },
