@@ -5,13 +5,16 @@ import Autocomplete from '@material-ui/lab/Autocomplete';
 
 import PowerSettingsNewIcon from '@material-ui/icons/PowerSettingsNew';
 import SendIcon from '@material-ui/icons/Send';
+import Snackbar from "@material-ui/core/Snackbar";
+import Fab from "@material-ui/core/Fab";
+import Backdrop from "@material-ui/core/Backdrop";
+import CircularProgress from "@material-ui/core/CircularProgress";
+import Typography from "@material-ui/core/Typography";
 
 import {gql} from "apollo-boost";
 import {useQuery, useMutation} from "@apollo/react-hooks";
 
 import create from 'zustand';
-import Snackbar from "@material-ui/core/Snackbar";
-import Fab from "@material-ui/core/Fab";
 
 function QueryUsers() {
     const GET_USERS = gql`
@@ -235,8 +238,10 @@ function SendOrder() {
     const userId = localStorage.getItem('userid');
     const [addOrder] = MutationOrder();
     const [open, setOpen] = useState(false);
+    const [backdropOpen, setBackdropOpen] = useState(false);
 
     const handleOnClick = () => {
+        setBackdropOpen(true);
         addOrder({
             variables: {
                 user_id: userId || user.user_id,
@@ -244,8 +249,9 @@ function SendOrder() {
                 soft_id: soft.soft_id,
                 alcohol_id: alcohol.alcohol_id
             }
-        }).then(() => {
+        }).then(({data: {insert_orders: {returning: {0: {order_id: orderId}}}}}) => {
             const body = JSON.stringify({
+                orderId,
                 username: username || user.user_name,
                 alcohol: alcohol.alcohol_name,
                 soft: soft.soft_name,
@@ -256,6 +262,7 @@ function SendOrder() {
                 body,
                 headers: { 'Content-Type': 'application/json' },
             }).then(() => {
+                setBackdropOpen(false);
                 setOpen(true);
                 alcoholApi.setState({
                     alcohol: undefined
@@ -280,7 +287,7 @@ function SendOrder() {
                     zIndex: 1,
                     bottom: '10%',
                     right: '10%',
-                    margin: '0 auto',
+                    margin: '0 auto'
                 }}
                 onClick={handleOnClick}
                 disabled={!soft && !alcohol}
@@ -294,6 +301,28 @@ function SendOrder() {
                 open={open}
                 message="Commande passée avec succès"
             />
+            <Backdrop style={{zIndex: 2}} open={backdropOpen}>
+                <Typography
+                    style={{
+                        color: 'white',
+                        position: 'absolute',
+                        top: '30%',
+                        margin: '0 auto'
+                    }}
+                >
+                    Enregistrement des données
+                </Typography>
+                <CircularProgress
+                    style={{
+                        color: 'white',
+                        position: 'absolute',
+                        top: '60%',
+                        left: '50%',
+                        margin: '0 auto'
+                    }}
+                    color="inherit"
+                />
+            </Backdrop>
         </>
     );
 }
