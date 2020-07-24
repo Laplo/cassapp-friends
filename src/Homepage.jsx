@@ -261,19 +261,20 @@ function SendOrder() {
                 method: 'POST',
                 body,
                 headers: { 'Content-Type': 'application/json' },
-            }).then(() => {
-                setBackdropOpen(false);
-                setOpen(true);
-                alcoholApi.setState({
-                    alcohol: undefined
+            })
+                .then(() => {
+                    setBackdropOpen(false);
+                    setOpen(true);
+                    alcoholApi.setState({
+                        alcohol: undefined
+                    });
+                    softApi.setState({
+                        soft: undefined
+                    });
+                    commentApi.setState({
+                        comment: undefined
+                    });
                 });
-                softApi.setState({
-                    soft: undefined
-                });
-                commentApi.setState({
-                    comment: undefined
-                });
-            });
         });
     };
 
@@ -306,19 +307,15 @@ function SendOrder() {
                     style={{
                         color: 'white',
                         position: 'absolute',
-                        top: '30%',
+                        top: '20%',
                         margin: '0 auto'
                     }}
                 >
-                    Enregistrement des données
+                    Envoi de la commande en cours...
                 </Typography>
                 <CircularProgress
                     style={{
                         color: 'white',
-                        position: 'absolute',
-                        top: '60%',
-                        left: '50%',
-                        margin: '0 auto'
                     }}
                     color="inherit"
                 />
