@@ -28,7 +28,7 @@ function App() {
             <div style={{
                 margin: 0,
                 position: 'absolute',
-                top: '55%',
+                top: '80%',
                 left: '50%',
                 width: '95%',
                 transform: 'translate(-50%, -50%)'

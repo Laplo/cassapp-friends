@@ -15,6 +15,7 @@ import {gql} from "apollo-boost";
 import {useQuery, useMutation} from "@apollo/react-hooks";
 
 import create from 'zustand';
+import Box from "@material-ui/core/Box";
 
 function QueryUsers() {
     const GET_USERS = gql`
@@ -216,7 +217,7 @@ function Soft() {
             noOptionsText="Aucun soft correspondant"
             loadingText="Chargement des softs..."
             renderInput={(params) => <TextField {...params} label="Choisissez votre soft" variant="outlined" />}
-            ListboxProps={{ style: { maxHeight: '10rem' } }}
+            ListboxProps={{ style: { maxHeight: '7rem' } }}
         />
     );
 }
@@ -302,23 +303,26 @@ function SendOrder() {
                 open={open}
                 message="Commande passée avec succès"
             />
-            <Backdrop style={{zIndex: 2}} open={backdropOpen}>
-                <Typography
-                    style={{
+            <Backdrop style={{zIndex: 2}} open={backdropOpen} >
+                    <CircularProgress size={150} style={{
                         color: 'white',
-                        position: 'absolute',
-                        top: '20%',
-                        margin: '0 auto'
-                    }}
-                >
-                    Envoi de la commande en cours...
-                </Typography>
-                <CircularProgress
-                    style={{
-                        color: 'white',
-                    }}
-                    color="inherit"
-                />
+                    }} />
+                    <Box
+                        top={0}
+                        left={0}
+                        bottom={0}
+                        right={0}
+                        position="absolute"
+                        display="flex"
+                        alignItems="center"
+                        justifyContent="center"
+                    >
+                        <Typography variant="caption" component="div" style={{
+                            color: 'white'
+                        }}>
+                            Envoi...
+                        </Typography>
+                    </Box>
             </Backdrop>
         </>
     );
