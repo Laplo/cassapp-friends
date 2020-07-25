@@ -16,6 +16,7 @@ import {useQuery, useMutation} from "@apollo/react-hooks";
 
 import create from 'zustand';
 import Box from "@material-ui/core/Box";
+import Slider from "@material-ui/core/Slider";
 
 function QueryUsers() {
     const GET_USERS = gql`
@@ -55,8 +56,8 @@ function QuerySofts() {
 
 function MutationOrder() {
     const ADD_ORDER = gql`
-        mutation AddOrder($alcohol_id: uuid, $comment: String, $soft_id: uuid, $user_id: uuid!) {
-            insert_orders(objects: {alcohol_id: $alcohol_id, comment: $comment, soft_id: $soft_id, user_id: $user_id}) {
+        mutation AddOrder($alcohol_id: uuid, $comment: String, $soft_id: uuid, $user_id: uuid!, $quantity: Int!) {
+            insert_orders(objects: {alcohol_id: $alcohol_id, comment: $comment, soft_id: $soft_id, user_id: $user_id, quantity: $quantity}) {
                 returning {
                     order_id
                 }
@@ -74,6 +75,9 @@ const [useAlcoholStore, alcoholApi] = create(() => ({
 }));
 const [useSoftStore, softApi] = create(() => ({
     soft: undefined
+}));
+const [useQuantityStore, quantityApi] = create(() => ({
+    quantity: undefined
 }));
 const [useCommentStore, commentApi] = create(() => ({
     comment: undefined
@@ -222,22 +226,41 @@ function Soft() {
     );
 }
 
+function Quantity() {
+
+    const handleOnChange = (event, quantity) => {
+        quantityApi.setState(() => ({quantity}));
+    };
+
+    return (
+        <>
+            <br />
+            <Slider
+                onChangeCommitted={handleOnChange}
+                aria-labelledby="continuous-slider"
+                valueLabelDisplay="on"
+                defaultValue={1}
+                marks
+                min={1}
+                max={10}
+                style={{width: '90%'}}
+            />
+        </>
+    );
+}
+
 function SendOrder() {
-    const {alcohol} = useAlcoholStore(state => ({
-        alcohol: state.alcohol
-    }));
-    const {soft} = useSoftStore(state => ({
-        soft: state.soft
-    }));
-    const {comment} = useCommentStore(state => ({
-        comment: state.comment
-    }));
-    const {user} = useUserStore(state => ({
-        user: state.user
-    }));
+    const {alcohol} = useAlcoholStore(({alcohol}) => ({alcohol}));
+    const {soft} = useSoftStore(({soft}) => ({soft}));
+    const {quantity} = useQuantityStore(({quantity}) => ({quantity}));
+    const {comment} = useCommentStore(({comment}) => ({comment}));
+    const {user} = useUserStore(({user}) => ({user}));
+
     const username = localStorage.getItem('username');
     const userId = localStorage.getItem('userid');
+
     const [addOrder] = MutationOrder();
+
     const [open, setOpen] = useState(false);
     const [backdropOpen, setBackdropOpen] = useState(false);
 
@@ -246,35 +269,31 @@ function SendOrder() {
         addOrder({
             variables: {
                 user_id: userId || user.user_id,
+                quantity,
                 comment,
                 soft_id: soft.soft_id,
                 alcohol_id: alcohol.alcohol_id
             }
         }).then(({data: {insert_orders: {returning: {0: {order_id: orderId}}}}}) => {
-            const body = JSON.stringify({
-                orderId,
-                username: username || user.user_name,
-                alcohol: alcohol.alcohol_name,
-                soft: soft.soft_name,
-                comment
-            });
             fetch(process.env.REACT_APP_MAIL_SENDER_URL, {
                 method: 'POST',
-                body,
+                body: JSON.stringify({
+                    orderId,
+                    username: username || user.user_name,
+                    alcohol: alcohol.alcohol_name,
+                    soft: soft.soft_name,
+                    comment,
+                    quantity
+                }),
                 headers: { 'Content-Type': 'application/json' },
             })
                 .then(() => {
                     setBackdropOpen(false);
                     setOpen(true);
-                    alcoholApi.setState({
-                        alcohol: undefined
-                    });
-                    softApi.setState({
-                        soft: undefined
-                    });
-                    commentApi.setState({
-                        comment: undefined
-                    });
+                    alcoholApi.setState({alcohol: undefined});
+                    softApi.setState({soft: undefined});
+                    commentApi.setState({comment: undefined});
+                    quantityApi.setState({quantity: undefined});
                 });
         });
     };
@@ -362,6 +381,7 @@ function Connection() {
                 }}>
                     <Alcohol />
                     <Soft />
+                    <Quantity />
                     <Comment />
                 </div>
                 <SendOrder />
@@ -394,6 +414,7 @@ function Comment() {
             variant="outlined"
             onChange={handleOnChange}
             fullWidth
+            placeholder={"Date, remerciements etc."}
         />
     );
 }
