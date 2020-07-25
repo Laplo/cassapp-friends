@@ -374,7 +374,7 @@ function Connection() {
                 <div style={{
                     margin: 0,
                     position: 'absolute',
-                    top: '20%',
+                    top: '25%',
                     left: '50%',
                     width: '95%',
                     transform: 'translate(-50%, -50%)'
