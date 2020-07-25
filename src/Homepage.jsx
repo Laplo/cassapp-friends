@@ -77,7 +77,7 @@ const [useSoftStore, softApi] = create(() => ({
     soft: undefined
 }));
 const [useQuantityStore, quantityApi] = create(() => ({
-    quantity: undefined
+    quantity: 1
 }));
 const [useCommentStore, commentApi] = create(() => ({
     comment: undefined
@@ -271,8 +271,8 @@ function SendOrder() {
                 user_id: userId || user.user_id,
                 quantity,
                 comment,
-                soft_id: soft.soft_id,
-                alcohol_id: alcohol.alcohol_id
+                soft_id: soft ? soft.soft_id : undefined,
+                alcohol_id: alcohol ? alcohol.alcohol_id : undefined
             }
         }).then(({data: {insert_orders: {returning: {0: {order_id: orderId}}}}}) => {
             fetch(process.env.REACT_APP_MAIL_SENDER_URL, {
@@ -280,8 +280,8 @@ function SendOrder() {
                 body: JSON.stringify({
                     orderId,
                     username: username || user.user_name,
-                    alcohol: alcohol.alcohol_name,
-                    soft: soft.soft_name,
+                    alcohol: alcohol ? alcohol.alcohol_name : undefined,
+                    soft: soft ? soft.soft_name : undefined,
                     comment,
                     quantity
                 }),
